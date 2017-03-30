@@ -1,0 +1,15 @@
+# This is a sample build configuration for Javascript.
+# Only use spaces to indent your .yml configuration..
+# -----
+# You can specify a custom docker image from Dockerhub as your build environment.
+image: utsocials/nodepostgres
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - /etc/init.d/postgresql start # starting the service
+          - sudo -u postgres sh -c 'createuser root & createdb testdb' # creating a root user 
+          - sudo -u postgres psql -c "ALTER USER root PASSWORD 'password';" # setting up the root password          
+          - npm install pg
+          - node test.js

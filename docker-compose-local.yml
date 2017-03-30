@@ -1,0 +1,10 @@
+client:
+    build: .
+    dockerfile: DockerfileLocal
+    environment:
+        NODE_ENV: development
+    ports:
+        - "4000:4000"        
+        - "5000:5000"        
+    volumes:
+        - .:/usr/src/app    
