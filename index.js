@@ -4,7 +4,7 @@ var app = express();
 
 var pg = require('pg'); 
 client = new pg.Client('postgres://root:password@localhost:5432/testdb');
-console.log("Start testing ...");
+console.log("Start testing (index.js)...");
 // connect to our database
 client.connect(function (err) {
   if (err) throw err;

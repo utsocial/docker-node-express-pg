@@ -1,1 +1,9 @@
 FROM utsocials/node-posgres-pipeline
+
+USER postgres
+
+EXPOSE 5000
+
+RUN     /etc/init.d/postgresql start &&\
+  psql --command "CREATE USER root WITH SUPERUSER PASSWORD 'password';" &&\
+    createdb testdb && node index.js --host=0.0.0.0 --port 5000
