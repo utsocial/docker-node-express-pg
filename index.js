@@ -1,7 +1,5 @@
 var express = require('express');
 var app = express();
-//-// poc pg
-
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -17,54 +15,55 @@ app.get('/', function(request, response) {
         { name: 'Martini', drunkness: 5 },
         { name: 'Scotch', drunkness: 10 }
     ];
-    var tagline = "Ivan Chenoweth 20170401-17:39 Docker+node+express+ejs+pg";
-    var pgrows={};
-    var pg = require('pg'); 
-      client = new pg.Client('postgres://root:password@localhost:5432/testdb');
-      console.log("Start testing (nodemon index.js) 22:59...");
-      // connect to our database
-      client.connect(function (err) {
-      	if (err) throw err;
-      	client.query('SELECT datname FROM pg_database WHERE datistemplate = false;', 
-		function (err, result) {
-     		if (err) throw err;
-      		//console.log(result.rows);
+	var appname =   "Boilerplate-dnepg V1.2 B.20170401 - Docker+node+express+ejs+pg ";
+    var title = appname ;
+    var pg = require('pg');
+  	console.log("Start testing request / (nodemon index.js) 2017-abr-03 20:21 ...");
+    client = new pg.Client('postgres://root:password@localhost:5432/testdb');
+    console.log ('1.- Connection to Postgres testdb ...');	
+	client.connect(function (err) {
+      	if (err) throw err;	
+	}); 	
+	console.log ('2.- Creating table products ...');
+	sqlcmd = `
+			CREATE TABLE IF NOT EXISTS products 
+			( product_no integer, 
+    			name text, 
+    			price numeric 
+			);
+		`;
+	console.log(sqlcmd);
+	client.query(sqlcmd, function (err) {
+			if (err) throw err;
+	});	
+	console.log("3.- inserting data ...");
+	sqlcmd =  ` 
+		INSERT INTO products VALUES (
+			1, 'Cheese', 98.76
+		)`;  
+    console.log("Exec:"+sqlcmd);
+	client.query(sqlcmd);
+	console.log('4.-Select Data');
+	sqlcmd = `
+		SELECT * FROM products
+		`;	
+	console.log("Exec:"+sqlcmd);
+    client.query(sqlcmd, 
+		function (err, res) {
+     			if (err) throw err;
+				console.log(JSON.stringify(res.rows, null, "    "));
+     			var pgrows = res.rows;
+				client.end(function (err) {
+      				if (err) throw err;
+      			}); // client.end
+   	}); // client.query
 	
- 	client.query("CREATE TABLE IF NOT EXISTS emps(firstname varchar(64), lastname varchar(64))");
-	/*
-	client.query("INSERT INTO emps(firstname, lastname) values($1, $2)", ['Ronald', 'McDonald'] ,
-
-		function (err, result) {
-     		if (err) throw err;
-		}
-	
-	);
-	/*
- 	client.query("INSERT INTO emps(firstname, lastname) values($1, $2)", ['Mayor', 'McCheese']);
-	var query = client.query("SELECT firstname, lastname FROM emps ORDER BY lastname, firstname");
-	query.on("row", function (row, result) {
-    		result.addRow(row);
-	});
-	query.on("end", function (result) {
-    		console.log(JSON.stringify(result.rows, null, "    "));
-    		client.end();
-	});
-	*/
-     	 	client.end(function (err) {
-      			if (err) throw err;
-      			pgrows=result.rows;
-      			console.log(pgrows);
-      		}); // client.end
-    	}); // client.query
-	});
-
-    response.render('pages/index', {
+     response.render('pages/index', {
         drinks: drink_list,
-        tagline: tagline,
-        dbrows: pgrows
+        tagline: title
     });
 
-});
+}); //end route 
 
 
 app.listen(app.get('port'), function() {

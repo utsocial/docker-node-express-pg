@@ -2,7 +2,7 @@ var pg = require('pg');
  
 var client = new pg.Client('postgres://root:password@localhost:5432/testdb');
  
-console.log("Start testing...");  
+console.log("Start DB integration test node+pg...");  
 // connect to our database 
 client.connect(function (err) {
   if (err) throw err;
